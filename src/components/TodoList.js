@@ -1,113 +1,90 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import uuid from "uuid";
 import AddTodo from "./AddTodo";
-
+import "./TodoList.css";
 const TodoList = props => {
   const [todos, setTodos] = useState([
     {
       id: uuid(),
-      name: "Todo-1",
-      description: "Learn React.js",
-      deadline: new Date().toString(),
-      isCompleted: true
+      description: "Learn React.js"
     },
     {
       id: uuid(),
-      name: "Todo-2",
-      description: "Learn React Hooks",
-      deadline: new Date().toString(),
-      isCompleted: true
+      description: "Learn React Hooks"
     },
     {
       id: uuid(),
-      name: "Todo-3",
-      description: "Learn Redux",
-      deadline: new Date().toString(),
-      isCompleted: false
+      description: "Learn Redux"
     }
   ]);
-  const [pageMode, setPageMode] = useState("List");
-  const [todoToBeEdited, setTodoToBeEdited] = useState(null);
+
   const [selectedTodoId, setSelectedTodoId] = useState(null);
 
-  const addTodoHandler = () => {
-    setPageMode("Insert");
-  };
-
-  const newTodoAdded = newTodo => {
-    setTodos([...todos, newTodo]);
-    setPageMode("List");
-  };
-
-  const todoUpdated = updatedTodo => {
-    let updated = todos.find(todo => todo.id === updatedTodo.id);
-    const index = todos.indexOf(updated);
-    if (index > -1) {
-      todos[index] = updatedTodo;
-      setTodos([...todos]);
-      setSelectedTodoId(null);
-      setPageMode("List");
-    }
-  };
+  useEffect(() => {
+    if (props.todo) setTodos([...todos, props.todo]);
+  }, [props.todo]);
 
   const deleteHandler = id => {
     const filteredTodos = todos.filter(todo => todo.id !== id);
     setTodos(filteredTodos);
   };
 
-  const editHandler = id => {
+  const openEditMode = id => {
     setSelectedTodoId(id);
-    setPageMode("Update");
   };
 
-  let todoItems = todos.length ? (
-    todos.map(todo => {
-      return (
-        <AddTodo
-          key={todo.id}
-          todo={todo}
-          pageMode={todo.id === selectedTodoId ? "Update" : "List"}
-          newTodoAdded={newTodoAdded}
-          todoUpdated={todoUpdated}
-          deleteTodo={deleteHandler}
-          editTodo={editHandler}
-        />
-      );
-    })
-  ) : (
-    <tr>
-      <td>There is no Todo</td>
-    </tr>
-  );
-  return (
-    <React.Fragment>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Deadline</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {todoItems}
-          {pageMode === "Insert" ? (
-            <AddTodo
-              key={uuid()}
-              todo={null}
-              pageMode={pageMode}
-              newTodoAdded={newTodoAdded}
-              todoUpdated={todoUpdated}
-              deleteTodo={deleteHandler}
-              editTodo={editHandler}
-            />
-          ) : null}
-        </tbody>
-      </table>
-      <button onClick={addTodoHandler}>Add New Todo</button>
-    </React.Fragment>
-  );
+  const updateTodoHandler = updatedTodo => {
+    const index = todos.findIndex(todo => todo.id === updatedTodo.id);
+    if (index > -1) {
+      todos[index] = updatedTodo;
+      setSelectedTodoId(null);
+    }
+  };
+
+  const cancelHandler = () => {
+    setSelectedTodoId(null);
+  };
+
+  const styles = {
+    listItem: {
+      padding: 0
+    }
+  };
+
+  const todoListItems = todos.map((todo, index) => {
+    const shouldUpdate = selectedTodoId === todo.id;
+    return (
+      <li key={todo.id} style={shouldUpdate ? styles.listItem : {}}>
+        {shouldUpdate ? (
+          <AddTodo
+            todo={todo}
+            todoUpdated={updateTodoHandler}
+            canceled={cancelHandler}
+          />
+        ) : (
+          todo.description
+        )}
+
+        {!shouldUpdate ? (
+          <>
+            <button
+              className="btn btn-red"
+              onClick={deleteHandler.bind(this, todo.id)}
+            >
+              Delete
+            </button>
+            <button
+              className="btn btn-blue"
+              onClick={openEditMode.bind(this, todo.id)}
+            >
+              Edit
+            </button>
+          </>
+        ) : null}
+      </li>
+    );
+  });
+  return <ul className="TodoList">{todoListItems}</ul>;
 };
 
 export default TodoList;

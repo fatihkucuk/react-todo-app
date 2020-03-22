@@ -1,133 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import uuid from "uuid";
+import "./AddTodo.css";
 const AddTodo = props => {
-  const [name, setName] = useState(props.todo ? props.todo.name : "");
   const [description, setDescription] = useState(
     props.todo ? props.todo.description : ""
   );
-  const [deadline, setDeadline] = useState(
-    props.todo ? props.todo.deadline : ""
-  );
-  const [isCompleted, setIsCompleted] = useState(
-    props.todo ? props.todo.isCompleted : false
-  );
 
-  const saveHandler = () => {
+  const [updateMode, setUpdateMode] = useState(!!props.todo);
+
+  const addTodoHandler = () => {
     const newTodo = {
-      id: props.pageMode === "Insert" ? uuid() : props.todo.id,
-      name,
-      description,
-      deadline,
-      isCompleted
+      id: uuid(),
+      description
     };
-    if (props.pageMode === "Insert") props.newTodoAdded(newTodo);
-    else if (props.pageMode === "Update") props.todoUpdated(newTodo);
+    props.todoAdded(newTodo);
+    setDescription("");
   };
 
-  const cancelHandler = () => {};
-
-  const editHandler = () => {
-    props.editTodo(props.todo.id);
+  const updateTodoHandler = () => {
+    const updatedTodo = {
+      id: props.todo.id,
+      description
+    };
+    props.todoUpdated(updatedTodo);
+    setDescription("");
   };
 
-  const deleteHandler = () => {
-    props.deleteTodo(props.todo.id);
+  const cancelHandler = () => {
+    setUpdateMode(false);
+    props.canceled();
   };
 
-  let nameCell;
-  let descriptionCell;
-  let deadlineCell;
-  let isCompletedCell;
+  const nameChangedHandler = e => {
+    setDescription(e.target.value);
+  };
 
-  switch (props.pageMode) {
-    case "List":
-      nameCell = <span>{props.todo.name}</span>;
-      descriptionCell = <span>{props.todo.description}</span>;
-      deadlineCell = <span>{props.todo.deadline}</span>;
-      isCompletedCell = (
-        <span>{props.todo.isCompleted ? "Completed" : "Not Completed"}</span>
-      );
-      break;
-    case "Insert":
-      nameCell = (
-        <input type="text" onChange={e => setName(e.target.value)}></input>
-      );
-      descriptionCell = (
-        <input
-          type="text"
-          onChange={e => setDescription(e.target.value)}
-        ></input>
-      );
-      deadlineCell = (
-        <input type="date" onChange={e => setDeadline(e.target.value)}></input>
-      );
-      isCompletedCell = (
-        <input
-          type="checkbox"
-          onChange={e => setIsCompleted(e.target.value)}
-        ></input>
-      );
-      break;
-    case "Update":
-      nameCell = (
-        <input
-          type="text"
-          onChange={e => setName(e.target.value)}
-          value={name}
-        ></input>
-      );
-      descriptionCell = (
-        <input
-          type="text"
-          onChange={e => setDescription(e.target.value)}
-          value={props.todo.description}
-        ></input>
-      );
-      deadlineCell = (
-        <input
-          type="date"
-          onChange={e => setDeadline(e.target.value)}
-          value={new Date(props.todo.deadline).toGMTString()}
-        ></input>
-      );
-      isCompletedCell = (
-        <input
-          type="checkbox"
-          checked={props.todo.isCompleted}
-          onChange={e => setIsCompleted(e.target.value)}
-          value={props.todo.isCompleted}
-        ></input>
-      );
-      break;
-    default:
-      break;
-  }
-
-  let buttons;
-  if (props.pageMode === "List") {
-    buttons = (
-      <>
-        <button onClick={editHandler}>Edit</button>
-        <button onClick={deleteHandler}>Delete</button>
-      </>
-    );
-  } else if (props.pageMode === "Insert" || props.pageMode === "Update") {
-    buttons = (
-      <>
-        <button onClick={saveHandler}>Save</button>
-        <button onClick={cancelHandler}>Cancel</button>
-      </>
-    );
-  }
+  const styles = {
+    input: {
+      padding: 0
+    },
+    button: {
+      padding: 10,
+      width: "auto"
+    }
+  };
 
   return (
-    <tr>
-      <td>{nameCell}</td>
-      <td>{descriptionCell}</td>
-      <td>{deadlineCell}</td>
-      <td>{isCompletedCell}</td>
-      <td>{buttons}</td>
-    </tr>
+    <div className="AddTodo">
+      <input
+        type="text"
+        onChange={nameChangedHandler}
+        value={description}
+        placeholder="ex: Learn React Hooks and Redux"
+      ></input>
+      {updateMode ? (
+        <>
+          <button
+            className="btn btn-red"
+            onClick={cancelHandler}
+            style={styles.button}
+          >
+            Cancel
+          </button>
+          <button
+            className="btn btn-blue"
+            onClick={updateTodoHandler}
+            style={styles.button}
+          >
+            Update
+          </button>
+        </>
+      ) : (
+        <button className="btn btn-blue" onClick={addTodoHandler}>
+          Add
+        </button>
+      )}
+    </div>
   );
 };
 

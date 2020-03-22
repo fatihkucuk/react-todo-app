@@ -1,0 +1,41 @@
+.TodoList {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 20px 40px;
+}
+
+.TodoList li {
+  position: relative;
+  border: 1px solid #ccc;
+  padding: 20px;
+  text-align: left;
+  font-size: 16px;
+}
+
+.TodoList li button:first-child {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.TodoList li button:nth-child(2) {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.TodoList li button:last-child {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.TodoList li input {
+  width: 85%;
+  padding: 20px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}

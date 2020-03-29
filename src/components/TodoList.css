@@ -33,9 +33,21 @@
   transform: translate(-50%, -50%);
 }
 .TodoList li input {
-  width: 85%;
   padding: 20px;
   border: none;
   outline: none;
   font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  width: calc(100vw - 330px);
+}
+
+.TodoList .todo-description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  width: calc(100vw - 250px);
 }

@@ -62,7 +62,9 @@ const TodoList = props => {
             canceled={cancelHandler}
           />
         ) : (
-          todo.description
+          <div className="todo-description" title={todo.description}>
+            {todo.description}
+          </div>
         )}
 
         {!shouldUpdate ? (

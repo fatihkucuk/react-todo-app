@@ -1,13 +1,23 @@
+.AddTodo {
+  margin: 20px 40px;
+}
+
 .AddTodo input {
-  padding: 20px;
+  padding: 20px 0 20px 0px;
   width: 100%;
   font-size: 16px;
   margin: 0;
-  border: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .AddTodo button {
   display: block;
   width: 100%;
   padding: 10px;
+  outline: none;
+}
+
+.AddTodo button:hover {
+  background-color: #5252b8;
 }
